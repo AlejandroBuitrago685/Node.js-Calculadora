@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+
+    <main>
+
+        <form action="/calcular" method="POST">
+        <div class="jumbotron">
+            <h1>Introducir los valores de la operación</h1>
+            <br>
+            <label>Id:</label>
+            <input type="text" id="id" name="id" required style="margin-left: 68px">
+            <br>
+            <br>
+            <label>Operación: </label>
+            <select name="operacion" required style="margin-left: 10px">
+
+                <option value="+">Sumar</option>
+
+                <option value="-">Restar</option>
+
+                <option value="*">Multiplicar</option>
+
+                <option value="/">Dividir</option>
+
+                <option value="R">Resetear</option>
+
+            </select>
+            <br>
+            <br>
+            <label>Número:</label>
+            <input type="number" name="numero" value="0.00" style="margin-left: 25px;">
+
+            <div class="row" style="margin-top: 20px;">
+
+                <div class="col-2 offset-md-1">
+                    <button type="submit">Enviar</button>
+                </div>
+
+                <div class="col-2">
+                    <button type="reset">Reiniciar</button>
+                </div>
+
+            </div>
+
+        </div>
+
+        </form>
+    </main>
+
+    <footer>
+        <%- include('../partials/footer'); %>
+    </footer>
+
+</body>
+
+</html>
