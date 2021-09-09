@@ -1,9 +1,13 @@
 var express = require('express');
+var app = express();
+const port = 3000;
 var LocalStorage = require('node-localstorage').LocalStorage,
     localStorage = new LocalStorage('./scratch');
-var app = express();
+
 var contador = 0;
 var datos = [];
+const idList = new Map();
+
 app.set('view engine', 'ejs');
 
 app.use(express.urlencoded({ extended: true }));
@@ -18,21 +22,17 @@ app.post('/calcular', (req, res) => {
     const id = req.body.id;
     const operacion = req.body.operacion;
     const numero = parseFloat(req.body.numero);
-    datos.push({ id, operacion, numero });
 
-    //--------------------------------------------
-    idList = [];
-    for (const i in datos) {
-        idList.push(datos[i].id)
-    }
-    //--------------------------------------------
+    datos.push({ id, operacion, numero});
+    idList.set(id,new Date());
     localStorage.setItem("Valor ID", id);
 
     if (operacion == "R") {
 
+        borrarID(id);
         res.render('pages/resultado',
             {
-                valor: "Última Operación: se ha reseteado la operación " + req.body.id,
+                valor: "Última Operación: se ha reseteado la id: " + req.body.id,
                 historico: JSON.stringify(datos)
             });
 
@@ -42,7 +42,7 @@ app.post('/calcular', (req, res) => {
 
         res.render('pages/resultado',
             {
-                valor: "Última Operación: " + operacion + numero + " a la operación " + req.body.id,
+                valor: "Última Operación: " + operacion + numero + " a la id: " + req.body.id,
                 historico: JSON.stringify(datos)
             });
     }
@@ -50,22 +50,42 @@ app.post('/calcular', (req, res) => {
 });
 
 
-app.listen(3000, () => {
+app.listen(port, () => {
 
-    console.log('Corriendo en el puerto 3000')
+    console.log(`Corriendo en el puerto ${port}`);
     setInterval(contadorTiempo, 1000);
+    
 
 });
 
 function contadorTiempo() {
 
-    idInicial = localStorage.getItem("Valor ID");
+    //console.log(idList)
+    idInicial = localStorage.getItem("Valor ID"); //Esto es para que deje la última id insertada en el input
     contador++;
 
-    if (contador == 60) {
+    var actualDate = new Date().getTime() - (1000 * 60);
+    const valores = idList.keys();
 
-        datos = [];
-        //console.log("Los datos se han reseteado.");
-        //contador = 0;
+    while (id = valores.next().value) {
+        var moment = new Date();
+        moment.getTime();
+
+        var fechaID = idList.get(id);
+
+        if (fechaID.getTime() < actualDate) {
+            borrarID(id);
+        }
+
     }
+
+}
+
+function borrarID(id) {
+
+    idList.delete(id);
+    datos = datos.filter(valor => {
+        valor.id != id
+    });
+
 }
